@@ -142,12 +142,57 @@ Watch connection pool in real-time:
 ./scripts/pool_monitor.sh
 ```
 
+## Verifying the Problem Exists
+
+### Symptom 1: Request Timeouts / 500 Errors
+After repeated failed transfers, the service starts returning errors:
+```bash
+# Send several transfers that will fail (insufficient stock)
+for i in {1..10}; do
+  curl -s -X POST "http://localhost:8080/api/transfer" \
+    -H "Content-Type: application/json" \
+    -d '{"sku":"SKU-001","fromLocation":"WAREHOUSE-A","toLocation":"WAREHOUSE-B","quantity":5000}'
+done
+
+# Check pool health - look for high activeConnections
+curl -s http://localhost:8080/api/health | jq '.connectionPool'
+```
+
+**What to look for:** `activeConnections` climbing toward `totalConnections` (max 5), and `threadsAwaitingConnection` > 0
+
+### Symptom 2: Inventory Mismatch
+After concurrent transfers, totals don't add up:
+```bash
+# Run burst test
+./scripts/burst_test.sh 30 100
+
+# Check consistency
+./scripts/consistency_check.sh
+```
+
+**What to look for:** Total quantity differs from expected (1800 for SKU-001), or negative quantities appear.
+
+### Viewing Logs
+```bash
+# All logs
+./scripts/view_logs.sh
+
+# Errors only
+./scripts/view_logs.sh errors
+
+# Connection pool activity
+./scripts/view_logs.sh pool
+
+# Follow live
+./scripts/view_logs.sh follow
+```
+
 ## Suggested Investigation Approach
 
 1. Run the consistency check to establish a baseline
 2. Start the pool monitor in a separate terminal
 3. Run the burst test and observe what happens
-4. Check the application logs: `docker-compose logs -f app`
+4. Check the application logs: `./scripts/view_logs.sh errors`
 5. Look at the code, starting with the transfer service
 
 ## Deliverables
