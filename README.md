@@ -24,13 +24,9 @@ After any number of valid transfers, the total should still be **1800 units**.
 
 - Unit tests pass consistently
 - Manual testing works fine
-- Low-concurrency testing works fine
-- **Under load testing (20+ concurrent requests), strange things happen:**
-  - Sometimes requests start timing out
-  - Inventory totals don't add up correctly
-  - Occasionally, negative stock quantities appear
+- **Load testing before production release is failing intermittently**
 
-The team suspects "it's a race condition" but hasn't been able to pinpoint the exact cause.
+The team hasn't been able to pinpoint the exact cause.
 
 ## Your Task
 
