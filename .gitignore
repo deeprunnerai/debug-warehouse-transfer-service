@@ -1,0 +1,30 @@
+# Internal solution - DO NOT COMMIT
+SOLUTION.md
+
+# Build output
+target/
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/
+
+# Temp
+*.tmp
+*.swp
